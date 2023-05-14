@@ -1,0 +1,14 @@
+﻿@using MFQ2022;
+@using TestApp.Scheduler;
+@using TestApp.Service;
+@inject MFQService mfqService
+
+@page "/Test"
+<h3>Test</h3>
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        mfqService.InsertServiceAsync();
+        return base.OnInitializedAsync();
+    }
+}
