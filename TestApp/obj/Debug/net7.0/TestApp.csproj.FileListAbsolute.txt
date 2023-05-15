@@ -134,3 +134,4 @@ C:\Users\user\Desktop\KoreaOfficialProblems\TestApp\obj\Debug\net7.0\refint\Test
 C:\Users\user\Desktop\KoreaOfficialProblems\TestApp\obj\Debug\net7.0\TestApp.pdb
 C:\Users\user\Desktop\KoreaOfficialProblems\TestApp\obj\Debug\net7.0\TestApp.genruntimeconfig.cache
 C:\Users\user\Desktop\KoreaOfficialProblems\TestApp\obj\Debug\net7.0\ref\TestApp.dll
+C:\Users\user\Desktop\KoreaOfficialProblems\TestApp\bin\Debug\net7.0\Newtonsoft.Json.dll

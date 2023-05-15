@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "0L5dwoAs0HN7MhOEdVE6jtBsQwPERRlyWULmNX/hlkn8tGrq+ZI5RKCfHcRoRB67cD1JPPNMJ8THSJ2Sht5Mhg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\user\\Desktop\\KoreaOfficialProblems\\TestConsole\\TestConsole.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,17 @@
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\bin\Debug\net7.0\TestConsole.exe
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\bin\Debug\net7.0\TestConsole.deps.json
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\bin\Debug\net7.0\TestConsole.runtimeconfig.json
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\bin\Debug\net7.0\TestConsole.dll
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\bin\Debug\net7.0\TestConsole.pdb
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.AssemblyInfo.cs
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.dll
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\refint\TestConsole.dll
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.pdb
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.genruntimeconfig.cache
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\ref\TestConsole.dll
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\user\Desktop\KoreaOfficialProblems\TestConsole\obj\Debug\net7.0\TestConsole.csproj.CopyComplete

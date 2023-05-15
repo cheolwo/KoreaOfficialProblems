@@ -1,8 +1,10 @@
 using MFQ2022;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Operators;
 using Quartz;
 using TestApp.Data;
 using TestApp.Service;
+using TestApp.Service.KoreaWarehouseInfo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,44 +15,48 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<MFQService>();
 builder.Services.AddSingleton<InsertJob>();
 builder.Services.AddSingleton<ExcuteJob>();
-builder.Services.AddSingleton<TimeCheckJob>();
+builder.Services.AddScoped<WarehouseInfoAPIService>();
+
 var ProcessDbConnectionString = builder.Configuration.GetConnectionString("ProcessDbConnection");
 builder.Services.AddDbContext<ProcessDbContext>(options =>
     options.UseMySQL(ProcessDbConnectionString));
+var WarehouseInfoDbConnectionString = builder.Configuration.GetConnectionString("WarehouseInfoDbConnection");
+builder.Services.AddDbContext<WarehouseInfoDbContext>(options =>
+    options.UseMySQL(WarehouseInfoDbConnectionString));    
 
-// �����ٷ��� ����մϴ�.
 builder.Services.AddQuartz(q =>
 {
     q.UseMicrosoftDependencyInjectionScopedJobFactory();
-    // Just use the name of your job that you created in the Jobs folder.
-    //var TimeJobKey = new JobKey("TimeJobKey");
-    //q.AddJob<TimeCheckJob>(opts => opts.WithIdentity(TimeJobKey));
+    //var InsertJobKey = new JobKey("InsertJob");
+    //q.AddJob<InsertJob>(opts => opts.WithIdentity(InsertJobKey));
     //q.AddTrigger(opts => opts
-    //    .ForJob(TimeJobKey)
-    //    .WithIdentity("TimeJobKey-trigger")
+    //    .ForJob(InsertJobKey)
+    //    .WithIdentity("InsertJob-trigger")
     //    //This Cron interval can be described as "run every minute" (when second is zero)
     //    .WithCronSchedule("0 * * ? * *")
     //    .WithPriority(1)
     //    .StartNow().WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(10)).RepeatForever()));
-    var InsertJobKey = new JobKey("InsertJob");
-    q.AddJob<InsertJob>(opts => opts.WithIdentity(InsertJobKey));
+
+    //var ExcuteJobKey = new JobKey("ExcuteJobKey");
+    //q.AddJob<ExcuteJob>(opts => opts.WithIdentity(ExcuteJobKey));
+    //q.AddTrigger(opts => opts
+    //    .ForJob(ExcuteJobKey)
+    //    .WithIdentity("ExcuteJob-trigger")
+    //    //This Cron interval can be described as "run every minute" (when second is zero)
+    //    .WithCronSchedule("0 * * ? * *")
+    //    .WithPriority(2)
+    //    .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(3)).WithRepeatCount(20)));
+
+    var CollectWarehouseInfoJobKey = new JobKey("CollectWarehouseInfoJobKey");
+    q.AddJob<CollectWarehouseInfoJob>(opts => opts.WithIdentity(CollectWarehouseInfoJobKey));
     q.AddTrigger(opts => opts
-        .ForJob(InsertJobKey)
-        .WithIdentity("InsertJob-trigger")
+        .ForJob(CollectWarehouseInfoJobKey)
+        .WithIdentity("CollectWarehouseInfoJob-trigger")
         //This Cron interval can be described as "run every minute" (when second is zero)
         .WithCronSchedule("0 * * ? * *")
         .WithPriority(2)
-        .StartNow().WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(10)).RepeatForever()));
-
-    var ExcuteJobKey = new JobKey("ExcuteJobKey");
-    q.AddJob<ExcuteJob>(opts => opts.WithIdentity(ExcuteJobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(ExcuteJobKey)
-        .WithIdentity("ExcuteJob-trigger")
-        //This Cron interval can be described as "run every minute" (when second is zero)
-        .WithCronSchedule("0 * * ? * *")
-        .WithPriority(3)
-        .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(3)).WithRepeatCount(20)));
+        .StartNow()
+        .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(3)).WithRepeatCount(1)));
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 var app = builder.Build();

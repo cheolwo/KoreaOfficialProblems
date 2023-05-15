@@ -38,10 +38,30 @@ namespace MFQ2022
             _logger = logger;
             _scopeFactory = scopeFactory;
         }
+        public async Task ExcuteServiceAsnyc()
+        {
+            _logger.LogInformation(nameof(MFQService.ExcuteServiceAsnyc));
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var DbContext = scope.ServiceProvider.GetService<ProcessDbContext>();
+                if (DbContext != null)
+                {
+                    while (PriorityQueue1.Count > 0 && TimeSlice > 0)
+                    {
+                        await Excute1(PriorityQueue1.Dequeue(), DbContext, _logger);
+                    }
+                    while (PriorityQueue2.Count > 0 && TimeSlice > 0)
+                    {
+                        await Excute2(PriorityQueue2.Dequeue(), DbContext, _logger);
+                    }
+                }
+            }
+            TimeSlice = 3;
+        }
         public async Task InsertServiceAsync()
         {
             _logger.LogInformation(nameof(MFQService.InsertServiceAsync));
-            CurrentTime++;
+            
             using (var scope = _scopeFactory.CreateScope())
             {
                 var DbContext = scope.ServiceProvider.GetService<ProcessDbContext>();
@@ -66,27 +86,9 @@ namespace MFQ2022
                     }
                 }
             }
+            CurrentTime++;
         }
-        public async Task ExcuteServiceAsnyc()
-        {
-            _logger.LogInformation(nameof(MFQService.ExcuteServiceAsnyc));
-            using (var scope = _scopeFactory.CreateScope())
-            {
-                var DbContext = scope.ServiceProvider.GetService<ProcessDbContext>();
-                if (DbContext != null)
-                {
-                    while (PriorityQueue1.Count > 0 && TimeSlice > 0)
-                    {
-                        await Excute1(PriorityQueue1.Dequeue(), DbContext, _logger);
-                    }
-                    while (PriorityQueue2.Count > 0 && TimeSlice > 0)
-                    {
-                        await Excute2(PriorityQueue2.Dequeue(), DbContext, _logger);                      
-                    }
-                }
-            }
-            TimeSlice = 3;
-        }
+        
         public Task CurrentTimeUpdate()
         {
             CurrentTime++;
@@ -123,7 +125,7 @@ namespace MFQ2022
             if(Process.RemainingTime == 0)
             {
                 DbContext.Entry(Process).State = EntityState.Modified;
-                Process.CompleteTime = DateTime.Now.Day;
+                Process.CompleteTime = CurrentTime;
                 await DbContext.SaveChangesAsync();
             }
         }
@@ -136,6 +138,7 @@ namespace MFQ2022
                 TimeSlice--;
                 Process.RemainingTime--;
                 Process.ExcutingTime++;
+                CurrentTime++;
             }
             _logger.LogInformation($"Process Name : {Process.Name}");
             _logger.LogInformation($"Process ExcutingTime : {Process.ExcutingTime}");
@@ -155,7 +158,7 @@ namespace MFQ2022
             if (Process.RemainingTime == 0)
             {
                 DbContext.Entry(Process).State = EntityState.Modified;
-                Process.CompleteTime = DateTime.Now.Day;
+                Process.CompleteTime = CurrentTime;
                 await DbContext.SaveChangesAsync();
             }
         }
@@ -186,18 +189,4 @@ namespace MFQ2022
             await _MFQService.ExcuteServiceAsnyc();
         }
     }
-    public class TimeCheckJob : IJob
-    {
-        private readonly MFQService _mfqService;
-        public TimeCheckJob(MFQService mfqService)
-        {
-            _mfqService = mfqService;
-        }
-
-        public async Task Execute(IJobExecutionContext context)
-        {
-            await _mfqService.CurrentTimeUpdate();
-        }
-    }
-
 }
