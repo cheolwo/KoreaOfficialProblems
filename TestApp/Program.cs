@@ -1,9 +1,9 @@
+using AutoMapper;
 using MFQ2022;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Crypto.Operators;
 using Quartz;
 using TestApp.Data;
-using TestApp.Service;
+using TestApp.Service.KoreaPrice;
 using TestApp.Service.KoreaWarehouseInfo;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,13 +16,26 @@ builder.Services.AddSingleton<MFQService>();
 builder.Services.AddSingleton<InsertJob>();
 builder.Services.AddSingleton<ExcuteJob>();
 builder.Services.AddScoped<WarehouseInfoAPIService>();
+builder.Services.AddScoped<BusanUmgungAPIService>();
+builder.Services.AddScoped<CollectBusanUmgongInfoJob>();
 
 var ProcessDbConnectionString = builder.Configuration.GetConnectionString("ProcessDbConnection");
 builder.Services.AddDbContext<ProcessDbContext>(options =>
     options.UseMySQL(ProcessDbConnectionString));
 var WarehouseInfoDbConnectionString = builder.Configuration.GetConnectionString("WarehouseInfoDbConnection");
 builder.Services.AddDbContext<WarehouseInfoDbContext>(options =>
-    options.UseMySQL(WarehouseInfoDbConnectionString));    
+    options.UseMySQL(WarehouseInfoDbConnectionString));
+
+var BusanUmgungDbConnectionString = builder.Configuration.GetConnectionString("BusanUmgungDbConnection");
+builder.Services.AddDbContext<BusanUmgungDbContext>(options =>
+    options.UseMySQL(BusanUmgungDbConnectionString));
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new BusanUmgungProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddQuartz(q =>
 {
@@ -46,17 +59,27 @@ builder.Services.AddQuartz(q =>
     //    .WithCronSchedule("0 * * ? * *")
     //    .WithPriority(2)
     //    .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(3)).WithRepeatCount(20)));
-
-    var CollectWarehouseInfoJobKey = new JobKey("CollectWarehouseInfoJobKey");
-    q.AddJob<CollectWarehouseInfoJob>(opts => opts.WithIdentity(CollectWarehouseInfoJobKey));
+     var CollectBusanUmgungInfoJobKey = new JobKey("CollectBusanUmgungInfoJobKey");
+    q.AddJob<CollectBusanUmgongInfoJob>(opts => opts.WithIdentity(CollectBusanUmgungInfoJobKey));
     q.AddTrigger(opts => opts
-        .ForJob(CollectWarehouseInfoJobKey)
-        .WithIdentity("CollectWarehouseInfoJob-trigger")
+        .ForJob(CollectBusanUmgungInfoJobKey)
+        .WithIdentity("CollectBusanUmgungInfoJob-trigger")
         //This Cron interval can be described as "run every minute" (when second is zero)
         .WithCronSchedule("0 * * ? * *")
         .WithPriority(2)
         .StartNow()
         .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(3)).WithRepeatCount(1)));
+
+    //var CollectWarehouseInfoJobKey = new JobKey("CollectWarehouseInfoJobKey");
+    //q.AddJob<CollectWarehouseInfoJob>(opts => opts.WithIdentity(CollectWarehouseInfoJobKey));
+    //q.AddTrigger(opts => opts
+    //    .ForJob(CollectWarehouseInfoJobKey)
+    //    .WithIdentity("CollectWarehouseInfoJob-trigger")
+    //    //This Cron interval can be described as "run every minute" (when second is zero)
+    //    .WithCronSchedule("0 * * ? * *")
+    //    .WithPriority(2)
+    //    .StartNow()
+    //    .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(3)).WithRepeatCount(1)));
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 var app = builder.Build();

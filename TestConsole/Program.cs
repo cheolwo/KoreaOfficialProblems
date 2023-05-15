@@ -45,6 +45,7 @@ public class BusanUmgungAPI
         if (response.IsSuccessStatusCode)
         {
             string responseContent = await response.Content.ReadAsStringAsync();
+            Deserialize(responseContent);
             JToken parsedJson = JToken.Parse(responseContent);
             return parsedJson.ToString();
         }
@@ -71,7 +72,6 @@ public class BusanUmgungAPI
         // JSON 데이터 매핑
         Root root = JsonSerializer.Deserialize<Root>(json) ?? throw new ArgumentNullException(json);
         PrintItems(root.getDailyCost.body.items.item);
-
     }
     static void PrintItems(List<Item> items)
     {
